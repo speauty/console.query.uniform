@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import "console.query.uniform/kernel"
 
 func main() {
-	fmt.Println("hello, this is a console app")
+	kernel.NewCfgService()
+	err := kernel.NewAppService().Run()
+	if err != nil {
+		return
+	}
 }
