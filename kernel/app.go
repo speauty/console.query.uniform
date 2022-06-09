@@ -1,7 +1,6 @@
 package kernel
 
 import (
-	"console.query.uniform/command"
 	"console.query.uniform/kernel/cfg"
 	liner2 "console.query.uniform/kernel/liner"
 	"console.query.uniform/kernel/log"
@@ -35,10 +34,12 @@ type App struct {
 }
 
 func (a *App) Run() error {
+	sort.Sort(cli.FlagsByName(a.cliApp.Flags))
+	sort.Sort(cli.CommandsByName(a.cliApp.Commands))
 	return a.getCmd().Run(os.Args)
 }
 
-func (a *App) registerCliCmd(cmd *cli.Command) {
+func (a *App) RegisterCliCmd(cmd *cli.Command) {
 	a.cliApp.Commands = append(a.cliApp.Commands, cmd)
 }
 
@@ -47,19 +48,13 @@ func (a *App) initCliApp() {
 		a.cliApp = cli.NewApp()
 
 		a.cliApp.Name = a.cfg.App.Name
-		a.cliApp.Authors = []*cli.Author{{Name: a.cfg.App.Author, Email: a.cfg.App.Email}}
-		a.cliApp.Version = a.cfg.App.Version
 		a.cliApp.Usage = runtime.GOOS + "/" + runtime.GOARCH
+		a.cliApp.UsageText = a.cfg.App.Usage
+		a.cliApp.Version = a.cfg.App.Version
 		a.cliApp.Description = a.cfg.App.Description
+		a.cliApp.Authors = []*cli.Author{{Name: a.cfg.App.Author, Email: a.cfg.App.Email}}
 
 		a.cliApp.Action = a.getAction()
-
-		a.registerCliCmd(command.Exit{}.Cmd())
-		a.registerCliCmd(command.Cls{}.Cmd())
-		a.registerCliCmd(command.Test{}.Cmd())
-
-		sort.Sort(cli.FlagsByName(a.cliApp.Flags))
-		sort.Sort(cli.CommandsByName(a.cliApp.Commands))
 	}
 }
 
