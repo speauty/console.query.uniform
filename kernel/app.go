@@ -45,6 +45,7 @@ func (a *App) RegisterCliCmd(cmd *cli.Command) {
 
 func (a *App) initCliApp() {
 	if a.cliApp == nil {
+		// 直接创建一个默认终端应用，然后设置相应属性和句柄之类的
 		a.cliApp = cli.NewApp()
 
 		a.cliApp.Name = a.cfg.App.Name
@@ -58,6 +59,7 @@ func (a *App) initCliApp() {
 	}
 }
 
+// 主要是创建各种临时目录，如果在运行中，将临时目录给删除了？？？
 func (a *App) initDir() {
 	var err error
 	if a.cfg.Sys.CmdHistoryFile != "" {

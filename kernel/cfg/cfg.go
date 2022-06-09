@@ -98,10 +98,12 @@ func (cfg *Cfg) Flush() error {
 	return nil
 }
 
+// 获取配置文件, 这里可能要做调整，如果配置文件位置变了，这里就要适当调整一下，这也是为什么单独使用getter获取的原因
 func (cfg Cfg) getCfgFile() string {
 	return constants.DefaultCfgFile
 }
 
+// 载入默认配置，这个后面可能要在每个结构体上实现一个loadDefault方法之类的，来载入对应默认值
 func (cfg *Cfg) loadDefaultCfg() {
 	cfg.Sys = CfgSys{
 		Mode:           constants.SysModeDebug,

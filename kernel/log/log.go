@@ -73,6 +73,7 @@ func (l *Log) initLogrus() {
 		ForceColors: true, FullTimestamp: true})
 	if l.cfg.Log.LogFile != "" { // 如果日志文件非空, 将日志打到对应文件
 		var fd *rotatelogs.RotateLogs
+		//@todo 这里可能需要抽象一下，这样看着不爽
 		if l.cfg.Log.LogRotationCount > 0 {
 			fd, _ = rotatelogs.New(
 				l.cfg.Log.LogFile+".%Y%m%d",
