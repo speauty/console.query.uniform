@@ -1,6 +1,7 @@
 package kernel
 
 import (
+	"console.query.uniform/util"
 	"fmt"
 	"github.com/gobs/args"
 	"github.com/peterh/liner"
@@ -12,15 +13,15 @@ import (
 	"sync"
 )
 
-var appApi *App
+var appService *App
 var appOnce sync.Once
 
 func NewAppService() *App {
 	appOnce.Do(func() {
-		appApi = &App{}
-		appApi.init()
+		appService = &App{}
+		appService.init()
 	})
-	return appApi
+	return appService
 }
 
 type App struct {
@@ -46,9 +47,24 @@ func (a *App) initCmd() {
 	}
 }
 
+func (a *App) initDir() {
+	if a.cfg.Sys.CmdHistoryFile != "" {
+		_ = util.CreateDirRecursion(a.cfg.Sys.CmdHistoryFile)
+	}
+
+	if a.cfg.Log.LogFile != "" {
+		_ = util.CreateDirRecursion(a.cfg.Log.LogFile)
+	}
+
+	if a.cfg.Log.DbLogFile != "" {
+		_ = util.CreateDirRecursion(a.cfg.Log.DbLogFile)
+	}
+}
+
 func (a *App) init() {
 	a.cfg = NewCfgService()
 	a.initCmd()
+	a.initDir()
 }
 
 func (a *App) getCmd() *cli.App {

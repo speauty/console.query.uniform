@@ -12,11 +12,11 @@ const (
 	SysModeTest    string = "test"
 	SysModeRelease string = "release"
 
-	DefaultCmdHistoryFile string = "./cmd.log"
+	DefaultCmdHistoryFile string = "./runtime/log/cmd.log"
 	DefaultCmdLinePrompt  string = " cqu > "
 
-	DefaultLogFile   string = "./log/app.log"
-	DefaultDbLogFile string = "./log/db.log"
+	DefaultLogFile   string = "./runtime/log/app.log"
+	DefaultDbLogFile string = "./runtime/log/db.log"
 
 	DbDriverMysql string = "mysql"
 	DbDriverPgsql string = "pgsql"
