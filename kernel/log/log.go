@@ -1,6 +1,8 @@
-package kernel
+package log
 
 import (
+	cfg2 "console.query.uniform/kernel/cfg"
+	"console.query.uniform/kernel/constants"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/sirupsen/logrus"
 	"sync"
@@ -20,7 +22,7 @@ func NewLogService() *Log {
 
 type Log struct {
 	logger *logrus.Logger
-	cfg    *Cfg
+	cfg    *cfg2.Cfg
 }
 
 func (l Log) Print(args ...interface{}) {
@@ -57,7 +59,7 @@ func (l Log) Panic(args ...interface{}) {
 
 func (l *Log) init() {
 	l.logger = logrus.New()
-	l.cfg = NewCfgService()
+	l.cfg = cfg2.NewCfgService()
 
 	l.initLogrus()
 }
@@ -67,7 +69,7 @@ func (l *Log) initLogrus() {
 		l.logger.SetLevel(logrus.Level(l.cfg.Log.LogLevel))
 	}
 	l.logger.SetFormatter(&logrus.TextFormatter{
-		TimestampFormat: DefaultTimestampFormat, DisableColors: false,
+		TimestampFormat: constants.DefaultTimestampFormat, DisableColors: false,
 		ForceColors: true, FullTimestamp: true})
 	if l.cfg.Log.LogFile != "" { // 如果日志文件非空, 将日志打到对应文件
 		var fd *rotatelogs.RotateLogs
@@ -90,7 +92,7 @@ func (l *Log) initLogrus() {
 			)
 		}
 
-		l.logger.SetFormatter(&logrus.JSONFormatter{TimestampFormat: DefaultTimestampFormat})
+		l.logger.SetFormatter(&logrus.JSONFormatter{TimestampFormat: constants.DefaultTimestampFormat})
 		l.logger.SetOutput(fd)
 	}
 }

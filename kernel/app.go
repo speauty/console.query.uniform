@@ -1,6 +1,10 @@
 package kernel
 
 import (
+	"console.query.uniform/command"
+	"console.query.uniform/kernel/cfg"
+	liner2 "console.query.uniform/kernel/liner"
+	"console.query.uniform/kernel/log"
 	"console.query.uniform/util"
 	"fmt"
 	"github.com/gobs/args"
@@ -9,6 +13,7 @@ import (
 	"io"
 	"os"
 	"runtime"
+	"sort"
 	"sync"
 )
 
@@ -24,26 +29,37 @@ func NewAppService() *App {
 }
 
 type App struct {
-	cmd *cli.App
-	cfg *Cfg
-	log *Log
+	cliApp *cli.App
+	cfg    *cfg.Cfg
+	log    *log.Log
 }
 
 func (a *App) Run() error {
 	return a.getCmd().Run(os.Args)
 }
 
-func (a *App) initCmd() {
-	if a.cmd == nil {
-		a.cmd = cli.NewApp()
+func (a *App) registerCliCmd(cmd *cli.Command) {
+	a.cliApp.Commands = append(a.cliApp.Commands, cmd)
+}
 
-		a.cmd.Name = a.cfg.App.Name
-		a.cmd.Authors = []*cli.Author{{Name: a.cfg.App.Author, Email: a.cfg.App.Email}}
-		a.cmd.Version = a.cfg.App.Version
-		a.cmd.Usage = runtime.GOOS + "/" + runtime.GOARCH
-		a.cmd.Description = a.cfg.App.Description
+func (a *App) initCliApp() {
+	if a.cliApp == nil {
+		a.cliApp = cli.NewApp()
 
-		a.cmd.Action = a.getAction()
+		a.cliApp.Name = a.cfg.App.Name
+		a.cliApp.Authors = []*cli.Author{{Name: a.cfg.App.Author, Email: a.cfg.App.Email}}
+		a.cliApp.Version = a.cfg.App.Version
+		a.cliApp.Usage = runtime.GOOS + "/" + runtime.GOARCH
+		a.cliApp.Description = a.cfg.App.Description
+
+		a.cliApp.Action = a.getAction()
+
+		a.registerCliCmd(command.Exit{}.Cmd())
+		a.registerCliCmd(command.Cls{}.Cmd())
+		a.registerCliCmd(command.Test{}.Cmd())
+
+		sort.Sort(cli.FlagsByName(a.cliApp.Flags))
+		sort.Sort(cli.CommandsByName(a.cliApp.Commands))
 	}
 }
 
@@ -73,17 +89,17 @@ func (a *App) initDir() {
 }
 
 func (a *App) init() {
-	a.cfg = NewCfgService()
-	a.log = NewLogService()
-	a.initCmd()
+	a.cfg = cfg.NewCfgService()
+	a.log = log.NewLogService()
+	a.initCliApp()
 	a.initDir()
 }
 
 func (a *App) getCmd() *cli.App {
-	if a.cmd == nil {
-		a.initCmd()
+	if a.cliApp == nil {
+		a.initCliApp()
 	}
-	return a.cmd
+	return a.cliApp
 }
 
 func (a *App) getAction() cli.ActionFunc {
@@ -93,16 +109,16 @@ func (a *App) getAction() cli.ActionFunc {
 				a.log.Warn("终端显示帮助异常", err)
 			}
 
-			line, err := NewLinerService().New()
+			line, err := liner2.NewLinerService().New()
 			if err != nil {
 				a.log.Warn("新建命令行异常", err)
 			}
-			defer func(service *Liner, liner *liner.State) {
+			defer func(service *liner2.Liner, liner *liner.State) {
 				err := service.Close(liner)
 				if err != nil {
 					a.log.Warn("释放命令行异常", err)
 				}
-			}(NewLinerService(), line)
+			}(liner2.NewLinerService(), line)
 
 			for {
 				if commandLine, err := line.Prompt(a.cfg.Sys.CmdLinePrompt); err == nil {
@@ -113,12 +129,12 @@ func (a *App) getAction() cli.ActionFunc {
 					}
 					s := []string{os.Args[0]}
 					s = append(s, cmdArgs...)
-					err := NewLinerService().Close(line)
+					err := liner2.NewLinerService().Close(line)
 					if err != nil {
 						a.log.Warn("释放命令行异常", err)
 					}
 					_ = c.App.Run(s)
-					line, _ = NewLinerService().New()
+					line, _ = liner2.NewLinerService().New()
 				} else if err == liner.ErrPromptAborted || err == io.EOF {
 					break
 				} else {

@@ -1,6 +1,7 @@
-package kernel
+package liner
 
 import (
+	cfg2 "console.query.uniform/kernel/cfg"
 	"github.com/peterh/liner"
 	"os"
 	"sync"
@@ -18,7 +19,7 @@ func NewLinerService() *Liner {
 }
 
 type Liner struct {
-	cfg *Cfg
+	cfg *cfg2.Cfg
 }
 
 func (l Liner) New() (*liner.State, error) {
@@ -53,5 +54,5 @@ func (l Liner) Close(liner *liner.State) error {
 }
 
 func (l *Liner) init() {
-	l.cfg = NewCfgService()
+	l.cfg = cfg2.NewCfgService()
 }

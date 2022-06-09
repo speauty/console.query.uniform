@@ -1,4 +1,4 @@
-package kernel
+package constants
 
 const (
 	AppName        string = "console.query.uniform"
@@ -14,8 +14,8 @@ const (
 
 	DefaultTimestampFormat string = "2006-01-02 15:04:05"
 
-	DefaultCmdHistoryFile string = "./runtime/log/cmd.log"
-	DefaultCmdLinePrompt  string = " cqu > "
+	DefaultCmdHistoryFile string = "./runtime/log/cliApp.log"
+	DefaultCmdLinePrompt  string = "query>"
 
 	DefaultLogFile          string = "./runtime/log/app.log"
 	DefaultDbLogFile        string = "./runtime/log/db.log"

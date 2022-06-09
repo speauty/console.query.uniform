@@ -1,6 +1,7 @@
-package kernel
+package cfg
 
 import (
+	"console.query.uniform/kernel/constants"
 	"encoding/json"
 	"io/ioutil"
 	"sync"
@@ -98,36 +99,36 @@ func (cfg *Cfg) Flush() error {
 }
 
 func (cfg Cfg) getCfgFile() string {
-	return DefaultCfgFile
+	return constants.DefaultCfgFile
 }
 
 func (cfg *Cfg) loadDefaultCfg() {
 	cfg.Sys = CfgSys{
-		Mode:           SysModeDebug,
-		CmdHistoryFile: DefaultCmdHistoryFile,
-		CmdLinePrompt:  DefaultCmdLinePrompt,
+		Mode:           constants.SysModeDebug,
+		CmdHistoryFile: constants.DefaultCmdHistoryFile,
+		CmdLinePrompt:  constants.DefaultCmdLinePrompt,
 		EnableLog:      1,
 		EnableDbLog:    1,
 	}
 	cfg.App = CfgApp{
-		Name:        AppName,
-		Version:     AppVersion,
-		Author:      AppAuthor,
-		Email:       AppEmail,
-		Usage:       AppUsage,
-		Description: AppDescription,
+		Name:        constants.AppName,
+		Version:     constants.AppVersion,
+		Author:      constants.AppAuthor,
+		Email:       constants.AppEmail,
+		Usage:       constants.AppUsage,
+		Description: constants.AppDescription,
 	}
 	cfg.Log = CfgLog{
-		DbLogFile:        DefaultDbLogFile,
-		LogFile:          DefaultLogFile,
-		LogLevel:         DefaultLogLevel,
-		LogRotationTime:  DefaultLogRotationTime,
-		LogRotationCount: DefaultLogRotationCount,
-		LogMaxAge:        DefaultLogMaxAge,
+		DbLogFile:        constants.DefaultDbLogFile,
+		LogFile:          constants.DefaultLogFile,
+		LogLevel:         constants.DefaultLogLevel,
+		LogRotationTime:  constants.DefaultLogRotationTime,
+		LogRotationCount: constants.DefaultLogRotationCount,
+		LogMaxAge:        constants.DefaultLogMaxAge,
 	}
 	cfg.DB = []CfgDB{{
-		Name:   DbDriverMysql,
-		Driver: DbDriverMysql,
-		Dsn:    DefaultDbDsn,
+		Name:   constants.DbDriverMysql,
+		Driver: constants.DbDriverMysql,
+		Dsn:    constants.DefaultDbDsn,
 	}}
 }

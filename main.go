@@ -1,11 +1,15 @@
 package main
 
-import "console.query.uniform/kernel"
+import (
+	"console.query.uniform/kernel"
+	"console.query.uniform/kernel/cfg"
+	"console.query.uniform/kernel/log"
+)
 
 func main() {
 
-	kernel.NewCfgService()
-	kernel.NewLogService()
+	cfg.NewCfgService()
+	log.NewLogService()
 
 	err := kernel.NewAppService().Run()
 	if err != nil {
