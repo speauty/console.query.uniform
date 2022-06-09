@@ -1,7 +1,9 @@
 package util
 
 import (
+	"console.query.uniform/kernel/constants"
 	"os"
+	"runtime"
 	"strings"
 )
 
@@ -43,4 +45,29 @@ func CreateDirRecursion(path string) error {
 		}
 	}
 	return nil
+}
+
+// GetOS 获取操作系统
+func GetOS() string {
+	return runtime.GOOS
+}
+
+// GetArchitecture 获取架构
+func GetArchitecture() string {
+	return runtime.GOARCH
+}
+
+// GetDS 获取分隔符
+func GetDS() string {
+	if GetOS() == constants.SysOsWindows {
+		return "\\"
+	} else {
+		return "/"
+	}
+}
+
+// GetBinName 获取可执行文件名称
+func GetBinName() string {
+	bin := strings.Split(os.Args[0], GetDS())
+	return bin[len(bin)-1]
 }

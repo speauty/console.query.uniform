@@ -1,20 +1,19 @@
 package constants
 
 const (
-	AppName        string = "console.query.uniform"
-	AppVersion     string = "v0.0.0"
-	AppAuthor      string = "speauty"
-	AppEmail       string = "speauty@163.com"
-	AppUsage       string = "-"
-	AppDescription string = "this is a description for the application"
+	SysOsWindows string = "windows"
 
 	SysModeDebug   string = "debug"
 	SysModeTest    string = "test"
 	SysModeRelease string = "release"
 
+	AppName        string = "统一查询终端"
+	AppVersion     string = "v0.0.0"
+	AppDescription string = "this is a description for the application"
+
 	DefaultTimestampFormat string = "2006-01-02 15:04:05"
 
-	DefaultCmdHistoryFile string = "./runtime/log/cliApp.log"
+	DefaultCmdHistoryFile string = "./runtime/log/history.log"
 	DefaultCmdLinePrompt  string = "query>"
 
 	DefaultLogFile          string = "./runtime/log/app.log"

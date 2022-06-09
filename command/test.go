@@ -20,7 +20,7 @@ func (t Test) Cmd() *cli.Command {
 		Action: func(c *cli.Context) error {
 			tmpCfg := cfg.NewCfgService()
 			fmt.Println(
-				"项目:", tmpCfg.App.Name, "版本:", tmpCfg.App.Version, "作者:", tmpCfg.App.Author,
+				"项目:", tmpCfg.App.Name, "版本:", tmpCfg.App.Version,
 			)
 			return nil
 		},

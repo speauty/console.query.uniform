@@ -33,14 +33,29 @@ type CfgSys struct {
 	EnableDbLog    int    `json:"enable_db_log"`    // 是否启用数据库查询及结果日志
 }
 
+func (s CfgSys) Default() *CfgSys {
+	return &CfgSys{
+		Mode:           constants.SysModeDebug,
+		CmdHistoryFile: constants.DefaultCmdHistoryFile,
+		CmdLinePrompt:  constants.DefaultCmdLinePrompt,
+		EnableLog:      1,
+		EnableDbLog:    1,
+	}
+}
+
 // CfgApp 配置-应用
 type CfgApp struct {
 	Name        string `json:"name"`        // 应用名称
 	Version     string `json:"version"`     // 应用版本
-	Author      string `json:"author"`      // 应用作者
-	Email       string `json:"email"`       // 作者邮箱
-	Usage       string `json:"usage"`       // 应用描述
 	Description string `json:"description"` // 应用描述
+}
+
+func (a CfgApp) Default() *CfgApp {
+	return &CfgApp{
+		Name:        constants.AppName,
+		Version:     constants.AppVersion,
+		Description: constants.AppDescription,
+	}
 }
 
 // CfgLog 配置-日志
@@ -53,18 +68,37 @@ type CfgLog struct {
 	LogMaxAge        int    `json:"log_max_age"`        // 日志文件清理前最长保存时间
 }
 
-// CfgDB 配置-数据库
-type CfgDB struct {
+func (l CfgLog) Default() *CfgLog {
+	return &CfgLog{
+		DbLogFile:        constants.DefaultDbLogFile,
+		LogFile:          constants.DefaultLogFile,
+		LogLevel:         constants.DefaultLogLevel,
+		LogRotationTime:  constants.DefaultLogRotationTime,
+		LogRotationCount: constants.DefaultLogRotationCount,
+		LogMaxAge:        constants.DefaultLogMaxAge,
+	}
+}
+
+// CfgDb 配置-数据库
+type CfgDb struct {
 	Name   string `json:"name"`   // 名称
 	Driver string `json:"driver"` // 数据库驱动
 	Dsn    string `json:"dsn"`    // 连接
 }
 
+func (d CfgDb) Default() []*CfgDb {
+	return []*CfgDb{{
+		Name:   constants.DbDriverMysql,
+		Driver: constants.DbDriverMysql,
+		Dsn:    constants.DefaultDbDsn,
+	}}
+}
+
 type Cfg struct {
-	Sys CfgSys  `json:"sys"`
-	App CfgApp  `json:"app"`
-	Log CfgLog  `json:"log"`
-	Db  []CfgDB `json:"db"`
+	Sys *CfgSys  `json:"sys"`
+	App *CfgApp  `json:"app"`
+	Log *CfgLog  `json:"log"`
+	Db  []*CfgDb `json:"db"`
 }
 
 // LoadCfg 从执行文件加载配置
@@ -103,34 +137,10 @@ func (cfg Cfg) getCfgFile() string {
 	return constants.DefaultCfgFile
 }
 
-// 载入默认配置，这个后面可能要在每个结构体上实现一个loadDefault方法之类的，来载入对应默认值
+// 载入默认配置，分别调用配置结构体自带的Default生成相应的默认配置
 func (cfg *Cfg) loadDefaultCfg() {
-	cfg.Sys = CfgSys{
-		Mode:           constants.SysModeDebug,
-		CmdHistoryFile: constants.DefaultCmdHistoryFile,
-		CmdLinePrompt:  constants.DefaultCmdLinePrompt,
-		EnableLog:      1,
-		EnableDbLog:    1,
-	}
-	cfg.App = CfgApp{
-		Name:        constants.AppName,
-		Version:     constants.AppVersion,
-		Author:      constants.AppAuthor,
-		Email:       constants.AppEmail,
-		Usage:       constants.AppUsage,
-		Description: constants.AppDescription,
-	}
-	cfg.Log = CfgLog{
-		DbLogFile:        constants.DefaultDbLogFile,
-		LogFile:          constants.DefaultLogFile,
-		LogLevel:         constants.DefaultLogLevel,
-		LogRotationTime:  constants.DefaultLogRotationTime,
-		LogRotationCount: constants.DefaultLogRotationCount,
-		LogMaxAge:        constants.DefaultLogMaxAge,
-	}
-	cfg.Db = []CfgDB{{
-		Name:   constants.DbDriverMysql,
-		Driver: constants.DbDriverMysql,
-		Dsn:    constants.DefaultDbDsn,
-	}}
+	cfg.Sys = CfgSys{}.Default()
+	cfg.App = CfgApp{}.Default()
+	cfg.Log = CfgLog{}.Default()
+	cfg.Db = CfgDb{}.Default()
 }

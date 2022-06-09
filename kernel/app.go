@@ -11,7 +11,6 @@ import (
 	"github.com/urfave/cli/v2"
 	"io"
 	"os"
-	"runtime"
 	"sort"
 	"sync"
 )
@@ -49,12 +48,11 @@ func (a *App) initCliApp() {
 		a.cliApp = cli.NewApp()
 
 		a.cliApp.Name = a.cfg.App.Name
-		a.cliApp.Usage = runtime.GOOS + "/" + runtime.GOARCH
-		a.cliApp.UsageText = a.cfg.App.Usage
+		a.cliApp.Usage = util.GetOS() + "." + util.GetArchitecture()
+		a.cliApp.UsageText = util.GetBinName()
 		a.cliApp.Version = a.cfg.App.Version
 		a.cliApp.Description = a.cfg.App.Description
-		a.cliApp.Authors = []*cli.Author{{Name: a.cfg.App.Author, Email: a.cfg.App.Email}}
-
+		a.cliApp.Authors = []*cli.Author{{"speauty", "speauty@163.co"}}
 		a.cliApp.Action = a.getAction()
 	}
 }
