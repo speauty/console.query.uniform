@@ -44,8 +44,12 @@ type CfgApp struct {
 
 // CfgLog 配置-日志
 type CfgLog struct {
-	LogFile   string `json:"log_file"`    // 日志文件
-	DbLogFile string `json:"db_log_file"` // 数据库查询及结果日志
+	DbLogFile        string `json:"db_log_file"`        // 数据库查询及结果日志
+	LogFile          string `json:"log_file"`           // 日志文件
+	LogLevel         uint32 `json:"log_level"`          // 日志级别
+	LogRotationTime  int    `json:"log_rotation_time"`  // 日志分割时间
+	LogRotationCount uint   `json:"log_rotation_count"` // 日志文件最大保存数量(和LogMaxAge只能设置一个, 优先采用LogRotationCount)
+	LogMaxAge        int    `json:"log_max_age"`        // 日志文件清理前最长保存时间
 }
 
 // CfgDB 配置-数据库
@@ -114,8 +118,12 @@ func (cfg *Cfg) loadDefaultCfg() {
 		Description: AppDescription,
 	}
 	cfg.Log = CfgLog{
-		LogFile:   DefaultLogFile,
-		DbLogFile: DefaultDbLogFile,
+		DbLogFile:        DefaultDbLogFile,
+		LogFile:          DefaultLogFile,
+		LogLevel:         DefaultLogLevel,
+		LogRotationTime:  DefaultLogRotationTime,
+		LogRotationCount: DefaultLogRotationCount,
+		LogMaxAge:        DefaultLogMaxAge,
 	}
 	cfg.DB = []CfgDB{{
 		Name:   DbDriverMysql,

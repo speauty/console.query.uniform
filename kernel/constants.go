@@ -12,11 +12,17 @@ const (
 	SysModeTest    string = "test"
 	SysModeRelease string = "release"
 
+	DefaultTimestampFormat string = "2006-01-02 15:04:05"
+
 	DefaultCmdHistoryFile string = "./runtime/log/cmd.log"
 	DefaultCmdLinePrompt  string = " cqu > "
 
-	DefaultLogFile   string = "./runtime/log/app.log"
-	DefaultDbLogFile string = "./runtime/log/db.log"
+	DefaultLogFile          string = "./runtime/log/app.log"
+	DefaultDbLogFile        string = "./runtime/log/db.log"
+	DefaultLogLevel         uint32 = 6
+	DefaultLogRotationTime  int    = 86400
+	DefaultLogRotationCount uint   = 15
+	DefaultLogMaxAge        int    = 0
 
 	DbDriverMysql string = "mysql"
 	DbDriverPgsql string = "pgsql"

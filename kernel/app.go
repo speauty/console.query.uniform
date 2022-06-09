@@ -7,7 +7,6 @@ import (
 	"github.com/peterh/liner"
 	"github.com/urfave/cli/v2"
 	"io"
-	"log"
 	"os"
 	"runtime"
 	"sync"
@@ -27,6 +26,7 @@ func NewAppService() *App {
 type App struct {
 	cmd *cli.App
 	cfg *Cfg
+	log *Log
 }
 
 func (a *App) Run() error {
@@ -48,21 +48,33 @@ func (a *App) initCmd() {
 }
 
 func (a *App) initDir() {
+	var err error
 	if a.cfg.Sys.CmdHistoryFile != "" {
-		_ = util.CreateDirRecursion(a.cfg.Sys.CmdHistoryFile)
+		if err = util.CreateDirRecursion(a.cfg.Sys.CmdHistoryFile); err != nil {
+			a.log.Error("创建命令行历史记录目录异常", err)
+		}
+
 	}
 
-	if a.cfg.Log.LogFile != "" {
-		_ = util.CreateDirRecursion(a.cfg.Log.LogFile)
+	if err == nil && a.cfg.Log.LogFile != "" {
+		if err = util.CreateDirRecursion(a.cfg.Log.LogFile); err != nil {
+			a.log.Error("创建日志目录异常", err)
+		}
 	}
 
-	if a.cfg.Log.DbLogFile != "" {
-		_ = util.CreateDirRecursion(a.cfg.Log.DbLogFile)
+	if err == nil && a.cfg.Log.DbLogFile != "" {
+		if err = util.CreateDirRecursion(a.cfg.Log.DbLogFile); err != nil {
+			a.log.Error("创建数据库日志目录异常", err)
+		}
+	}
+	if err != nil {
+		panic(err)
 	}
 }
 
 func (a *App) init() {
 	a.cfg = NewCfgService()
+	a.log = NewLogService()
 	a.initCmd()
 	a.initDir()
 }
@@ -77,10 +89,20 @@ func (a *App) getCmd() *cli.App {
 func (a *App) getAction() cli.ActionFunc {
 	return func(c *cli.Context) error {
 		if c.NArg() == 0 {
-			_ = cli.ShowAppHelp(c)
+			if err := cli.ShowAppHelp(c); err != nil {
+				a.log.Warn("终端显示帮助异常", err)
+			}
 
-			line, _ := NewLinerService().New()
-			defer NewLinerService().Close(line)
+			line, err := NewLinerService().New()
+			if err != nil {
+				a.log.Warn("新建命令行异常", err)
+			}
+			defer func(service *Liner, liner *liner.State) {
+				err := service.Close(liner)
+				if err != nil {
+					a.log.Warn("释放命令行异常", err)
+				}
+			}(NewLinerService(), line)
 
 			for {
 				if commandLine, err := line.Prompt(a.cfg.Sys.CmdLinePrompt); err == nil {
@@ -91,18 +113,23 @@ func (a *App) getAction() cli.ActionFunc {
 					}
 					s := []string{os.Args[0]}
 					s = append(s, cmdArgs...)
-					NewLinerService().Close(line)
+					err := NewLinerService().Close(line)
+					if err != nil {
+						a.log.Warn("释放命令行异常", err)
+					}
 					_ = c.App.Run(s)
 					line, _ = NewLinerService().New()
 				} else if err == liner.ErrPromptAborted || err == io.EOF {
 					break
 				} else {
-					log.Print("Error reading line: ", err)
+					a.log.Print("读取命令行异常", err)
+					fmt.Println("读取命令行异常:", err)
 					continue
 				}
 			}
 		} else {
-			fmt.Printf("Command '%s' not found\n", c.Args().Get(0))
+			a.log.Warn("未找到相应命令:", c.Args().Get(0))
+			fmt.Println("未找到相应命令:", c.Args().Get(0))
 		}
 		return nil
 	}

@@ -2,7 +2,6 @@ package kernel
 
 import (
 	"github.com/peterh/liner"
-	"log"
 	"os"
 	"sync"
 )
@@ -36,17 +35,21 @@ func (l Liner) New() (*liner.State, error) {
 	return line, nil
 }
 
-func (l Liner) Close(liner *liner.State) {
+func (l Liner) Close(liner *liner.State) error {
 	if f, err := os.Create(l.cfg.Sys.CmdHistoryFile); err != nil {
-		log.Print("Error writing history file: ", err)
+		return err
 	} else {
-		_, err = liner.WriteHistory(f)
-		if err != nil {
-			//todo 补充错误处理
+		if _, err = liner.WriteHistory(f); err != nil {
+			return err
 		}
-		_ = f.Close()
+		if err = f.Close(); err != nil {
+			return err
+		}
 	}
-	_ = liner.Close()
+	if err := liner.Close(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (l *Liner) init() {
