@@ -7,24 +7,20 @@ import (
 )
 
 var (
-	CfgService *Cfg
-	CfgOnce    sync.Once
+	cfgService *Cfg
+	cfgOnce    sync.Once
 )
 
 func NewCfgService() *Cfg {
-	CfgOnce.Do(func() {
-		CfgService = &Cfg{}
-		err := CfgService.LoadCfg()
+	cfgOnce.Do(func() {
+		cfgService = &Cfg{}
+		err := cfgService.LoadCfg()
 		if err != nil {
-			// fmt.Println("错误: 加载配置文件异常,", err)
-			CfgService.loadDefaultCfg()
-			err = CfgService.Flush()
-			if err != nil {
-				// fmt.Println("错误: 生成默认配置文件异常,", err)
-			}
+			cfgService.loadDefaultCfg()
+			_ = cfgService.Flush()
 		}
 	})
-	return CfgService
+	return cfgService
 }
 
 // CfgSys 配置-系统
