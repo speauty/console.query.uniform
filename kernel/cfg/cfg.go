@@ -64,7 +64,7 @@ type Cfg struct {
 	Sys CfgSys  `json:"sys"`
 	App CfgApp  `json:"app"`
 	Log CfgLog  `json:"log"`
-	DB  []CfgDB `json:"db"`
+	Db  []CfgDB `json:"db"`
 }
 
 // LoadCfg 从执行文件加载配置
@@ -126,7 +126,7 @@ func (cfg *Cfg) loadDefaultCfg() {
 		LogRotationCount: constants.DefaultLogRotationCount,
 		LogMaxAge:        constants.DefaultLogMaxAge,
 	}
-	cfg.DB = []CfgDB{{
+	cfg.Db = []CfgDB{{
 		Name:   constants.DbDriverMysql,
 		Driver: constants.DbDriverMysql,
 		Dsn:    constants.DefaultDbDsn,

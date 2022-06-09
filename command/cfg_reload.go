@@ -14,7 +14,7 @@ type CfgReload struct{}
 
 func (cr CfgReload) Cmd() *cli.Command {
 	return &cli.Command{
-		Name:     "cfg-reload",
+		Name:     "cfg.reload",
 		Aliases:  []string{"reload"},
 		Usage:    "重新载入配置文件;",
 		Category: "设置",
