@@ -5,8 +5,11 @@ chcp 65001
 set app=query
 set mod=console.query.uniform
 
-set /p opt=请输入操作(run-运行, build-编译):
-if "%opt%" == "run" (
+set /p opt=请输入操作(init-初始化&模块, run-运行, build-编译):
+if "%opt%" == "init" (
+    call:init
+    echo 初始化完成
+) else if "%opt%" == "run" (
     call:run
 ) else if "%opt%" == "build" (
     call:build
@@ -16,6 +19,9 @@ if "%opt%" == "run" (
 
 pause
 
+:init
+go mod tidy
+goto:eof
 
 :run
 go run %mod%
