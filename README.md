@@ -6,3 +6,5 @@
 
 主要采用Golang以终端形式实现应用，支持Windows/Linux等OS，数据存储暂时没想到用什么，日志采用logrus。
 
+### 全部指令
+
