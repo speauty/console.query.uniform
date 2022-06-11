@@ -3,7 +3,9 @@ chcp 65001
 ::获取当前bat所在目录
 ::set workspace=%~dp0
 set app=query
+set /p "app=设置可执行文件名称(默认值:%app%): "
 set mod=console.query.uniform
+set /p "mod=设置编译目标模块(默认值:%mod%): "
 
 set /p opt=请输入操作(init-初始化&模块, run-运行, build-编译):
 if "%opt%" == "init" (
