@@ -25,7 +25,7 @@ const (
 
 	DbDriverMysql string = "mysql"
 	DbDriverPgsql string = "pgsql"
-	DefaultDbDsn  string = "root:root@tcp(127.0.0.1:3306)/console.query.uniform?charset=utf8mb4"
+	DefaultDbDsn  string = "root:root@tcp(127.0.0.1:3306)/console.query.uniform?charset=utf8mb4&multiStatements=true"
 
 	DefaultCfgFile string = "./console.json"
 )

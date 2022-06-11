@@ -11,23 +11,31 @@ import (
 )
 
 func init() {
-	kernel.NewAppService().RegisterCliCmd(Sql{}.Cmd())
+	kernel.NewAppService().RegisterCliCmd(Script{}.Cmd())
 }
 
-type Sql struct{}
+type Script struct{}
 
-// 好烦，sql语句过长，会导致。。。显示不下，估计得加个直接执行sql脚本的指令
-
-func (s Sql) Cmd() *cli.Command {
+func (s Script) Cmd() *cli.Command {
 	tmpLog := log.NewLogService()
 	return &cli.Command{
-		Name:     "db.query",
-		Aliases:  []string{"sql"},
-		Usage:    "执行查询, sql \"sql string\";",
+		Name:     "db.script",
+		Aliases:  []string{"script"},
+		Usage:    "执行脚本文件, script \"sql file\";",
 		Category: "数据库",
 		Action: func(c *cli.Context) error {
-			sqlStr := strings.ToLower(c.Args().Get(0))
+			pathStr := strings.ToLower(c.Args().Get(0))
+			if pathStr == "" {
+				fmt.Println("未检测到脚本文件路径")
+				return nil
+			}
+			//sqlStr, err := util.LoadFile2Str(pathStr)
 			tmpCfg := cfg.NewCfgService()
+			//if err != nil {
+			//	fmt.Println("文件载入异常", err)
+			//	tmpLog.Error(err)
+			//	return err
+			//}
 			for _, val := range tmpCfg.Db {
 				test := &db.Db{}
 				if err := test.NewDb(val.Driver, val.Dsn); err != nil {
@@ -35,15 +43,13 @@ func (s Sql) Cmd() *cli.Command {
 					tmpLog.Error(err)
 					continue
 				}
-				// 这里的话，就不会单独检测连接是否有效了，直接查询就行
-				result, err := test.Exec(sqlStr)
+				_, err := test.LoadFile(pathStr)
 				if err != nil {
 					fmt.Println("数据库查询异常", err)
 					tmpLog.Error(err)
 					continue
 				}
-				rows, _ := result.RowsAffected()
-				fmt.Println(val.Name, "查询正常, 影响行数", rows)
+				fmt.Println(val.Name, "查询完成")
 				test.CloseDb()
 			}
 			return nil

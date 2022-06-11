@@ -2,6 +2,7 @@ package util
 
 import (
 	"console.query.uniform/kernel/constants"
+	"io/ioutil"
 	"os"
 	"runtime"
 	"strings"
@@ -45,6 +46,12 @@ func CreateDirRecursion(path string) error {
 		}
 	}
 	return nil
+}
+
+// LoadFile2Str 直接加载文件
+func LoadFile2Str(filePath string) (string, error) {
+	bytes, err := ioutil.ReadFile(filePath)
+	return string(bytes), err
 }
 
 // GetOS 获取操作系统

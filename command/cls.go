@@ -1,13 +1,12 @@
 package command
 
 import (
-	"console.query.uniform/kernel"
 	"fmt"
 	"github.com/urfave/cli/v2"
 )
 
 func init() {
-	kernel.NewAppService().RegisterCliCmd(Cls{}.Cmd())
+	//kernel.NewAppService().RegisterCliCmd(Cls{}.Cmd())
 }
 
 type Cls struct{}
