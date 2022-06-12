@@ -78,9 +78,10 @@ func (l *Log) initLogrus() {
 		ForceColors: true, FullTimestamp: true})
 	if l.cfg.Log.LogFile != "" { // 如果日志文件非空, 将日志打到对应文件
 		var fd *rotatelogs.RotateLogs
+		var opts []rotatelogs.Option
 		var err error
 
-		optLog := l.cfg.Log.LogFile + ".%Y%m%d"
+		optLogFmt := l.cfg.Log.LogFile + ".%Y%m%d"
 		optLink := rotatelogs.WithLinkName(l.cfg.Log.LogFile)
 		optMaxAge := rotatelogs.WithMaxAge(time.Duration(l.cfg.Log.LogMaxAge) * time.Second)
 		optMaxRotationCount := rotatelogs.WithRotationCount(l.cfg.Log.LogRotationCount)
@@ -88,23 +89,20 @@ func (l *Log) initLogrus() {
 			l.cfg.Log.LogRotationTime = 60 * 60 * 24
 		}
 		optRotationTime := rotatelogs.WithRotationTime(time.Duration(l.cfg.Log.LogRotationTime) * time.Second)
+
 		// windows默认环境，没有创建软连接的权限，所以这里需要区分处理
 		// 参考链接 https://github.com/golang/go/issues/22874
-		if util.GetOS() == constants.SysOsWindows {
-			if l.cfg.Log.LogRotationCount > 0 {
-				fd, err = rotatelogs.New(optLog, optMaxAge, optMaxRotationCount)
-			} else {
-				fd, err = rotatelogs.New(optLog, optMaxAge, optRotationTime)
-			}
+		if util.GetOS() != constants.SysOsWindows {
+			opts = append(opts, optLink)
+		}
+		opts = append(opts, optMaxAge)
+		if l.cfg.Log.LogRotationCount > 0 {
+			opts = append(opts, optMaxRotationCount)
 		} else {
-			if l.cfg.Log.LogRotationCount > 0 {
-				fd, err = rotatelogs.New(optLog, optLink, optMaxAge, optMaxRotationCount)
-			} else {
-				fd, err = rotatelogs.New(optLog, optLink, optMaxAge, optRotationTime)
-			}
+			opts = append(opts, optRotationTime)
 		}
 
-		if err != nil {
+		if fd, err = rotatelogs.New(optLogFmt, opts...); err != nil {
 			fmt.Println(err)
 		}
 
