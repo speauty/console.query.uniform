@@ -29,13 +29,7 @@ func (s Script) Cmd() *cli.Command {
 				fmt.Println("未检测到脚本文件路径")
 				return nil
 			}
-			//sqlStr, err := util.LoadFile2Str(pathStr)
 			tmpCfg := cfg.NewCfgService()
-			//if err != nil {
-			//	fmt.Println("文件载入异常", err)
-			//	tmpLog.Error(err)
-			//	return err
-			//}
 			for _, val := range tmpCfg.Db {
 				test := &db.Db{}
 				if err := test.NewDb(val.Driver, val.Dsn); err != nil {
