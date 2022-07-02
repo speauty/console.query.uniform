@@ -20,7 +20,7 @@ const (
 	DefaultDbLogFile        string = "./runtime/log/db.log"
 	DefaultLogLevel         uint32 = 6
 	DefaultLogRotationTime  int    = 86400
-	DefaultLogRotationCount uint   = 15
+	DefaultLogRotationCount uint   = 10
 	DefaultLogMaxAge        int    = 0
 
 	DbDriverMysql string = "mysql"

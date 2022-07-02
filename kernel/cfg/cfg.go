@@ -24,8 +24,8 @@ func NewCfgService() *Cfg {
 	return cfgService
 }
 
-// CfgSys 配置-系统
-type CfgSys struct {
+// Sys 配置-系统
+type Sys struct {
 	Mode           string `json:"mode"`             // 模式: debug test release
 	CmdHistoryFile string `json:"cmd_history_file"` // 命令历史文件
 	CmdLinePrompt  string `json:"cmd_line_prompt"`  // 命令行提示符
@@ -33,8 +33,8 @@ type CfgSys struct {
 	EnableDbLog    int    `json:"enable_db_log"`    // 是否启用数据库查询及结果日志
 }
 
-func (s CfgSys) Default() *CfgSys {
-	return &CfgSys{
+func (s Sys) Default() *Sys {
+	return &Sys{
 		Mode:           constants.SysModeDebug,
 		CmdHistoryFile: constants.DefaultCmdHistoryFile,
 		CmdLinePrompt:  constants.DefaultCmdLinePrompt,
@@ -43,23 +43,23 @@ func (s CfgSys) Default() *CfgSys {
 	}
 }
 
-// CfgApp 配置-应用
-type CfgApp struct {
+// App 配置-应用
+type App struct {
 	Name        string `json:"name"`        // 应用名称
 	Version     string `json:"version"`     // 应用版本
 	Description string `json:"description"` // 应用描述
 }
 
-func (a CfgApp) Default() *CfgApp {
-	return &CfgApp{
+func (a App) Default() *App {
+	return &App{
 		Name:        constants.AppName,
 		Version:     constants.AppVersion,
 		Description: constants.AppDescription,
 	}
 }
 
-// CfgLog 配置-日志
-type CfgLog struct {
+// Log 配置-日志
+type Log struct {
 	DbLogFile        string `json:"db_log_file"`        // 数据库查询及结果日志
 	LogFile          string `json:"log_file"`           // 日志文件
 	LogLevel         uint32 `json:"log_level"`          // 日志级别
@@ -68,8 +68,8 @@ type CfgLog struct {
 	LogMaxAge        int    `json:"log_max_age"`        // 日志文件清理前最长保存时间
 }
 
-func (l CfgLog) Default() *CfgLog {
-	return &CfgLog{
+func (l Log) Default() *Log {
+	return &Log{
 		DbLogFile:        constants.DefaultDbLogFile,
 		LogFile:          constants.DefaultLogFile,
 		LogLevel:         constants.DefaultLogLevel,
@@ -79,15 +79,15 @@ func (l CfgLog) Default() *CfgLog {
 	}
 }
 
-// CfgDb 配置-数据库
-type CfgDb struct {
+// Db 配置-数据库
+type Db struct {
 	Name   string `json:"name"`   // 名称
 	Driver string `json:"driver"` // 数据库驱动
 	Dsn    string `json:"dsn"`    // 连接
 }
 
-func (d CfgDb) Default() []*CfgDb {
-	return []*CfgDb{{
+func (d Db) Default() []*Db {
+	return []*Db{{
 		Name:   constants.DbDriverMysql,
 		Driver: constants.DbDriverMysql,
 		Dsn:    constants.DefaultDbDsn,
@@ -95,10 +95,10 @@ func (d CfgDb) Default() []*CfgDb {
 }
 
 type Cfg struct {
-	Sys *CfgSys  `json:"sys"`
-	App *CfgApp  `json:"app"`
-	Log *CfgLog  `json:"log"`
-	Db  []*CfgDb `json:"db"`
+	Sys *Sys  `json:"sys"`
+	App *App  `json:"app"`
+	Log *Log  `json:"log"`
+	Db  []*Db `json:"db"`
 }
 
 // LoadCfg 从执行文件加载配置
@@ -133,14 +133,12 @@ func (cfg *Cfg) Flush() error {
 }
 
 // 获取配置文件, 这里可能要做调整，如果配置文件位置变了，这里就要适当调整一下，这也是为什么单独使用getter获取的原因
-func (cfg Cfg) getCfgFile() string {
-	return constants.DefaultCfgFile
-}
+func (cfg *Cfg) getCfgFile() string { return constants.DefaultCfgFile }
 
 // 载入默认配置，分别调用配置结构体自带的Default生成相应的默认配置
 func (cfg *Cfg) loadDefaultCfg() {
-	cfg.Sys = CfgSys{}.Default()
-	cfg.App = CfgApp{}.Default()
-	cfg.Log = CfgLog{}.Default()
-	cfg.Db = CfgDb{}.Default()
+	cfg.Sys = Sys{}.Default()
+	cfg.App = App{}.Default()
+	cfg.Log = Log{}.Default()
+	cfg.Db = Db{}.Default()
 }
